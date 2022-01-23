@@ -75,9 +75,9 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-process-hollowing" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/20/process-hollowing/" class="article-date">
+    <a href="/2022/01/20/runpe/" class="article-date">
   <time class="dt-published" datetime="2022-01-20T14:09:57.000Z" itemprop="datePublished">2022-01-20</time>
 </a>
     
@@ -93,7 +93,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/20/process-hollowing/">初探RunPE</a>
+      <a class="p-name article-title" href="/2022/01/20/runpe/">初識RunPE</a>
     </h1>
   
 
@@ -105,13 +105,13 @@
 <p>一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行時，要如何知道執行哪一個PE的內容才對呢，答案就在PEB(Process Environment Block)中，PEB中的ImageBaseAddress會儲存要執行的程式映像基址，假設一個PE模組被映射到address space中的0xA00000，還有另一個PE模組被映射到0x400000，而如果PEB-&gt;ImageBaseAddress是0xA00000，就代表該PE是這支process將要執行的模組。</p>
         
           <p class="article-more-link">
-            <a href="/2022/01/20/process-hollowing/#more">Read More &gt;</a>
+            <a href="/2022/01/20/runpe/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/process-hollowing/" data-id="ckyr2t06q0001ygtvb18tbs4e" data-title="初探RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="ckyr3vo1500017ctv402adtot" data-title="初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -148,7 +148,7 @@
       <ul>
         
           <li>
-            <a href="/2022/01/20/process-hollowing/">初探RunPE</a>
+            <a href="/2022/01/20/runpe/">初識RunPE</a>
           </li>
         
       </ul>
