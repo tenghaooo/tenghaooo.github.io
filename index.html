@@ -75,6 +75,55 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-paging-and-TLE" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/24/paging-and-TLE/" class="article-date">
+  <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/01/24/paging-and-TLE/">paging(1)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。</p>
+<h1 id="virtual-address"><a href="#virtual-address" class="headerlink" title="virtual address"></a>virtual address</h1><p>從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會有4個page。<br>而假設整個physical memory為128bytes，總共就有8個frame。</p>
+<p>把一個process A的4個page分別放到不同的frame，例如page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。<br>從程式的視角來看，地址都是連續的，且地址就是0~63，但這0~63是virtual address。<br>實際上，當CPU要讀取或寫入某個virtual address(VA)時，會將其轉換成對應的physical address(PA)，例如VA0~15會被轉成PA48~63，因為page0-&gt;frame3，而VA16~31會被轉成PA112~127，看似連續的VA其實是分散在physical memory中。</p>
+        
+          <p class="article-more-link">
+            <a href="/2022/01/24/paging-and-TLE/#more">Read More &gt;</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/01/24/paging-and-TLE/" data-id="ckysnq4vc000bk8tvbenp6jev" data-title="paging(1)" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/01/20/runpe/" class="article-date">
@@ -111,7 +160,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="ckyr3vo1500017ctv402adtot" data-title="初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="ckysnq4uv0001k8tv8o5z7ewn" data-title="初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -135,7 +184,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li></ul>
     </div>
   </div>
 
@@ -146,6 +195,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/01/24/paging-and-TLE/">paging(1)</a>
+          </li>
         
           <li>
             <a href="/2022/01/20/runpe/">初識RunPE</a>
