@@ -9,14 +9,14 @@
   <meta name="description" content="paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。 virtual address從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會">
 <meta property="og:type" content="article">
 <meta property="og:title" content="paging(1)">
-<meta property="og:url" content="https://tenghaooo.github.io/2022/01/24/paging-and-TLE/index.html">
+<meta property="og:url" content="https://tenghaooo.github.io/2022/01/24/paging1/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
 <meta property="og:description" content="paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。 virtual address從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/pte.PNG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/access-memory.PNG">
 <meta property="article:published_time" content="2022-01-24T07:49:15.000Z">
-<meta property="article:modified_time" content="2022-01-24T12:31:34.990Z">
+<meta property="article:modified_time" content="2022-02-17T07:59:46.797Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/pte.PNG">
@@ -80,9 +80,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-paging-and-TLE" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-paging1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/24/paging-and-TLE/" class="article-date">
+    <a href="/2022/01/24/paging1/" class="article-date">
   <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
 </a>
     
@@ -115,7 +115,7 @@
 <p>如果frame不夠了，例如上面的例子，其實放了A後剩下的空間是放不下B的，因為總共8個frame而已，扣除A用的4個frame剩下的空間其實不滿4個frame，因為OS本身也需要佔據memory(可能佔走兩個frame)，又或者再來一個process C的話該怎麼辦，之後再寫。</p>
 <h1 id="page-table"><a href="#page-table" class="headerlink" title="page table"></a>page table</h1><p>每個process會有一張自己的page table，記載著自己的page被放在哪些frame中，依照table，virtual page會被轉成physical frame(PF)，完成VA-&gt;PA的轉換。<br>以上面的例子來說，會有一個table寫著VP和PF的對應，page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。</p>
 <p>接下來看VA如何透過table轉成PA。<br>因為每個process的space是64bytes，所以只需要6個bit來表示VA，把VA拆成兩個部分來看，第一是virtual page number(VPN)，第二是offset。<br>用前兩個bit(msb)表示page number(因為總共4個page，用2個bit即可)，後四個bit表示offset。<br>假設有個VA是21，轉成6bits就是010101，前兩個bit代表著VA21在哪一個page，後4個bit代表VA21在該page的offset，也就是VA21在page1內(前兩個bit是01，第二個page)，且offset為0101(從page1開始offset 5)。<br>可以算一下，page1的起始位址是16，offset 5，因此16+5就是21。</p>
-<p>接下來拿01去查表，對應的是PFN(physical frame number)是7，因此VA22對應到的PA就是1110110，前三個bit對應PFN(因為共有8個frame，需要3bits表示)，後四個bit對應offset。</p>
+<p>接下來拿01去查表，對應的是PFN(physical frame number)是7，因此VA21對應到的PA就是1110101，前三個bit對應PFN(因為共有8個frame，需要3bits表示)，後四個bit對應offset。</p>
 <h1 id="page-table-entry"><a href="#page-table-entry" class="headerlink" title="page table entry"></a>page table entry</h1><p>page table可以看成是一個array，index就是VPN，因此table[0]的內容就是page0對應的PFN，還有其他相關的flag。<br><img src="https://tenghaooo.github.io/pics/pte.PNG" alt="PTE"></p>
 <h2 id="valid-bit"><a href="#valid-bit" class="headerlink" title="valid bit"></a>valid bit</h2><p>valid bit表示該page的轉換是否有效，如果process嘗試存取被標記invalid的page，可能會被OS終止執行。又例如一個4G的address space，以4K為一個page，總共就有2^20個page，但不可能每個page都有使用，而且如果每個page明明沒在用卻又要分配一個frame給它，那很浪費physical memory，因此可以把沒使用的page標記成invalid，這樣也無須分配frame給invalid的page，可以大幅節省physical memory。</p>
 <h2 id="protection-bit"><a href="#protection-bit" class="headerlink" title="protection bit"></a>protection bit</h2><p>page的RWX。</p>
@@ -129,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/paging-and-TLE/" data-id="ckzmsa9qc0003oktv04fd3me7" data-title="paging(1)" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="ckzqp1fug0003bstv9k5d0ef3" data-title="paging(1)" class="article-share-link">Share</a>
       
       
       
@@ -172,7 +172,7 @@
       <ul>
         
           <li>
-            <a href="/2022/01/24/paging-and-TLE/">paging(1)</a>
+            <a href="/2022/01/24/paging1/">paging(1)</a>
           </li>
         
           <li>
