@@ -75,6 +75,67 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/09/fd/" class="article-date">
+  <time class="dt-published" datetime="2022-03-09T10:03:42.000Z" itemprop="datePublished">2022-03-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%9B%B6%E7%A2%8E%E5%A7%BF%E5%8B%A2%E9%BB%9E/">零碎姿勢點</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/03/09/fd/">file descriptor</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>每個process有一個自己的file descriptor table，紀錄當前process的fd。</p>
+<p>在kernel space中有一個open file table，紀錄檔案開啟的情況。<br>每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。</p>
+<p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
+<ul>
+<li><p>當process <code>open()</code>一個file時，會產生一個新的fd跟新的open file description，並且新fd會指向新open file description，新open file description再指向inode。</p>
+</li>
+<li><p>當process A跟process B<code>open()</code>相同的file，那麼會新增各自的fd，指向不同的open file description，但兩個open file description會指向同一個inode。</p>
+</li>
+<li><p>當process A跟process B <code>open()</code>不同的file，更不用說了，各自的fd指向不同的open file description，也指向不同的inode。</p>
+</li>
+<li><p>當process A <code>fork()</code>一個process B出來時，A和B會有各自獨立的file descriptor table，但這些相同數字的fd(這些fd是指在<code>fork()</code>之前A就已經<code>open()</code>取得的fd)會指向相同的open file description。<br>假設在<code>fork()</code>前，A有<code>open()</code>得到一個fd3，那<code>fork()</code>之後，B的fd3和A的fd3會指向同一個open file description。<br>但如果在<code>fork()</code>之後，A和B各自<code>open()</code>一個file，這兩個新的fd4就會指向不同的open file description，也就可能會有不同的rw flag和offset(不過如果AB <code>open()</code>的檔案是同一個，那這兩個open file description會指向同一個inode)。</p>
+</li>
+<li><p>process有多個thread時，thread們共用process的file descriptor table。</p>
+</li>
+<li><p>process可以用<code>dup()</code>、<code>dup2()</code>來複製自己的fd，新的這個fd會和舊的fd指向同一個open file description。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jeyqvg0002xctv8fmz4jj3" data-title="file descriptor" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fd/" rel="tag">fd</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-paging1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/01/24/paging1/" class="article-date">
@@ -112,7 +173,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="cl0i905s40001qktv209d9d73" data-title="paging(1)" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="cl0jeyqvi0003xctv0ze7gpye" data-title="paging(1)" class="article-share-link">Share</a>
       
       
       
@@ -160,7 +221,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="cl0i905sb0003qktv3khu5du3" data-title="初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="cl0jeyqvl0006xctvcdp9gn24" data-title="初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -184,7 +245,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E5%A7%BF%E5%8B%A2%E9%BB%9E/">零碎姿勢點</a></li></ul>
     </div>
   </div>
 
@@ -195,6 +256,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/03/09/fd/">file descriptor</a>
+          </li>
         
           <li>
             <a href="/2022/01/24/paging1/">paging(1)</a>
@@ -213,7 +278,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/process-hollowing/" style="font-size: 10px;">process hollowing</a> <a href="/tags/process-injection/" style="font-size: 10px;">process injection</a> <a href="/tags/runpe/" style="font-size: 10px;">runpe</a>
+      <a href="/tags/fd/" style="font-size: 10px;">fd</a> <a href="/tags/process-hollowing/" style="font-size: 10px;">process hollowing</a> <a href="/tags/process-injection/" style="font-size: 10px;">process injection</a> <a href="/tags/runpe/" style="font-size: 10px;">runpe</a>
     </div>
   </div>
 
