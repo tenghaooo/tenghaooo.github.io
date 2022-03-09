@@ -6,16 +6,16 @@
   
   <title>file descriptor | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。   當pro">
+  <meta name="description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="file descriptor">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/03/09/fd/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。   當pro">
+<meta property="og:description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/fd.png">
 <meta property="article:published_time" content="2022-03-09T10:03:42.000Z">
-<meta property="article:modified_time" content="2022-03-09T10:28:06.526Z">
+<meta property="article:modified_time" content="2022-03-09T11:39:19.475Z">
 <meta property="article:author" content="tenghaooo">
 <meta property="article:tag" content="fd">
 <meta name="twitter:card" content="summary">
@@ -109,6 +109,7 @@
         <p>每個process有一個自己的file descriptor table，紀錄當前process的fd。</p>
 <p>在kernel space中有一個open file table，紀錄檔案開啟的情況。<br>每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。</p>
 <p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
+<span id="more"></span>
 <ul>
 <li><p>當process <code>open()</code>一個file時，會產生一個新的fd跟新的open file description，並且新fd會指向新open file description，新open file description再指向inode。</p>
 </li>
@@ -128,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jf4l460002notv734efmsc" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jinzo600016ktvc6ao9kr9" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       

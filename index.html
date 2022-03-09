@@ -104,26 +104,15 @@
         <p>每個process有一個自己的file descriptor table，紀錄當前process的fd。</p>
 <p>在kernel space中有一個open file table，紀錄檔案開啟的情況。<br>每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。</p>
 <p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
-<ul>
-<li><p>當process <code>open()</code>一個file時，會產生一個新的fd跟新的open file description，並且新fd會指向新open file description，新open file description再指向inode。</p>
-</li>
-<li><p>當process A跟process B<code>open()</code>相同的file，那麼會新增各自的fd，指向不同的open file description，但兩個open file description會指向同一個inode。</p>
-</li>
-<li><p>當process A跟process B <code>open()</code>不同的file，更不用說了，各自的fd指向不同的open file description，也指向不同的inode。</p>
-</li>
-<li><p>當process A <code>fork()</code>一個process B出來時，A和B會有各自獨立的file descriptor table，但這些相同數字的fd(這些fd是指在<code>fork()</code>之前A就已經<code>open()</code>取得的fd)會指向相同的open file description。<br>假設在<code>fork()</code>前，A有<code>open()</code>得到一個fd3，那<code>fork()</code>之後，B的fd3和A的fd3會指向同一個open file description。<br>但如果在<code>fork()</code>之後，A和B各自<code>open()</code>一個file，這兩個新的fd4就會指向不同的open file description，也就可能會有不同的rw flag和offset(不過如果AB <code>open()</code>的檔案是同一個，那這兩個open file description會指向同一個inode)。</p>
-</li>
-<li><p>process有多個thread時，thread們共用process的file descriptor table。</p>
-</li>
-<li><p>process可以用<code>dup()</code>、<code>dup2()</code>來複製自己的fd，新的這個fd會和舊的fd指向同一個open file description。</p>
-</li>
-</ul>
-<p>參考資料<br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/67375028/does-opening-a-file-in-a-child-process-create-a-separate-entry-in-the-system-ope">https://stackoverflow.com/questions/67375028/does-opening-a-file-in-a-child-process-create-a-separate-entry-in-the-system-ope</a><br><a target="_blank" rel="noopener" href="https://kkc.github.io/2020/08/22/file-descriptor/">https://kkc.github.io/2020/08/22/file-descriptor/</a></p>
-
+        
+          <p class="article-more-link">
+            <a href="/2022/03/09/fd/#more">Read More &gt;</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jf4l460002notv734efmsc" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jinzo600016ktvc6ao9kr9" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -174,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="cl0jf4l4j0003notv09kc9jej" data-title="paging(1)" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="cl0jinzo900036ktv610sbi8b" data-title="paging(1)" class="article-share-link">Share</a>
       
       
       
@@ -222,7 +211,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="cl0jf4l4n0006notv7qhbc0vj" data-title="初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="cl0jinzoc00066ktveyz42qhf" data-title="初識RunPE" class="article-share-link">Share</a>
       
       
       
