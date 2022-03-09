@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>paging(1) | tenghaooo&#39;s blog</title>
+  <title>paging | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。 virtual address從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會">
 <meta property="og:type" content="article">
-<meta property="og:title" content="paging(1)">
-<meta property="og:url" content="https://tenghaooo.github.io/2022/01/24/paging1/index.html">
+<meta property="og:title" content="paging">
+<meta property="og:url" content="https://tenghaooo.github.io/2022/01/24/paging/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
 <meta property="og:description" content="paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。 virtual address從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/pte.PNG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/access-memory.PNG">
 <meta property="article:published_time" content="2022-01-24T07:49:15.000Z">
-<meta property="article:modified_time" content="2022-02-17T07:59:46.797Z">
+<meta property="article:modified_time" content="2022-03-09T14:33:04.536Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/pte.PNG">
@@ -80,9 +80,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-paging1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/24/paging1/" class="article-date">
+    <a href="/2022/01/24/paging/" class="article-date">
   <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
 </a>
     
@@ -98,7 +98,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      paging(1)
+      paging
     </h1>
   
 
@@ -129,7 +129,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/paging1/" data-id="cl0jinzo900036ktv610sbi8b" data-title="paging(1)" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/paging/" data-id="cl0jnz47b0003ywtv4hys3opa" data-title="paging" class="article-share-link">Share</a>
       
       
       
@@ -168,7 +168,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E5%A7%BF%E5%8B%A2%E9%BB%9E/">零碎姿勢點</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
     </div>
   </div>
 
@@ -185,7 +185,7 @@
           </li>
         
           <li>
-            <a href="/2022/01/24/paging1/">paging(1)</a>
+            <a href="/2022/01/24/paging/">paging</a>
           </li>
         
           <li>
