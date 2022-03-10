@@ -75,6 +75,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ch3-TEB &amp; PEB" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/10/ch3-TEB%20&%20PEB/" class="article-date">
+  <time class="dt-published" datetime="2022-03-10T11:43:13.000Z" itemprop="datePublished">2022-03-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/03/10/ch3-TEB%20&%20PEB/">ch3-TEB &amp; PEB</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="calling-convention"><a href="#calling-convention" class="headerlink" title="calling convention"></a>calling convention</h1><p>stdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。<br>calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等</p>
+<p>如果可以不靠引入函數表與Win32 API，就找到載入的系統模組的base address與函數的address，並且依照calling convention把參數擺好，然後call function，那就等於是成功寫出並執行shellcode了，這是接下來的目標。</p>
+        
+          <p class="article-more-link">
+            <a href="/2022/03/10/ch3-TEB%20&%20PEB/#more">Read More &gt;</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl0l4mn7z00039gtvba5jh3vm" data-title="ch3-TEB &amp; PEB" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/03/09/fd/" class="article-date">
@@ -112,7 +160,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0jnz4780001ywtv9qu82cvn" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl0l4mn8a000d9gtva6f34n8o" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -126,9 +174,9 @@
 
 
   
-    <article id="post-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-ch18-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/24/paging/" class="article-date">
+    <a href="/2022/01/24/ch18-paging/" class="article-date">
   <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
 </a>
     
@@ -144,7 +192,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/24/paging/">paging</a>
+      <a class="p-name article-title" href="/2022/01/24/ch18-paging/">ch18-paging</a>
     </h1>
   
 
@@ -157,13 +205,13 @@
 <p>把一個process A的4個page分別放到不同的frame，例如page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。<br>從程式的視角來看，地址都是連續的，且地址就是0~63，但這0~63是virtual address。<br>實際上，當CPU要讀取或寫入某個virtual address(VA)時，會將其轉換成對應的physical address(PA)，例如VA0~15會被轉成PA48~63，因為page0-&gt;frame3，而VA16~31會被轉成PA112~127，看似連續的VA其實是分散在physical memory中。</p>
         
           <p class="article-more-link">
-            <a href="/2022/01/24/paging/#more">Read More &gt;</a>
+            <a href="/2022/01/24/ch18-paging/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/paging/" data-id="cl0jnz47b0003ywtv4hys3opa" data-title="paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/ch18-paging/" data-id="cl0l4mn7o00019gtvby5d7p7k" data-title="ch18-paging" class="article-share-link">Share</a>
       
       
       
@@ -175,9 +223,9 @@
 
 
   
-    <article id="post-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-ch2-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/20/runpe/" class="article-date">
+    <a href="/2022/01/20/ch2-runpe/" class="article-date">
   <time class="dt-published" datetime="2022-01-20T14:09:57.000Z" itemprop="datePublished">2022-01-20</time>
 </a>
     
@@ -193,7 +241,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/20/runpe/">初識RunPE</a>
+      <a class="p-name article-title" href="/2022/01/20/ch2-runpe/">ch2-初識RunPE</a>
     </h1>
   
 
@@ -205,13 +253,13 @@
 <p>一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行時，要如何知道執行哪一個PE的內容才對呢，答案就在PEB(Process Environment Block)中，PEB中的ImageBaseAddress會儲存要執行的程式映像基址，假設一個PE模組被映射到address space中的0xA00000，還有另一個PE模組被映射到0x400000，而如果PEB-&gt;ImageBaseAddress是0xA00000，就代表該PE是這支process將要執行的模組。</p>
         
           <p class="article-more-link">
-            <a href="/2022/01/20/runpe/#more">Read More &gt;</a>
+            <a href="/2022/01/20/ch2-runpe/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/runpe/" data-id="cl0jnz47e0006ywtv55zvcii1" data-title="初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/ch2-runpe/" data-id="cl0l4mn89000c9gtv9zdcfzvr" data-title="ch2-初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -248,15 +296,19 @@
       <ul>
         
           <li>
+            <a href="/2022/03/10/ch3-TEB%20&%20PEB/">ch3-TEB &amp; PEB</a>
+          </li>
+        
+          <li>
             <a href="/2022/03/09/fd/">file descriptor</a>
           </li>
         
           <li>
-            <a href="/2022/01/24/paging/">paging</a>
+            <a href="/2022/01/24/ch18-paging/">ch18-paging</a>
           </li>
         
           <li>
-            <a href="/2022/01/20/runpe/">初識RunPE</a>
+            <a href="/2022/01/20/ch2-runpe/">ch2-初識RunPE</a>
           </li>
         
       </ul>
