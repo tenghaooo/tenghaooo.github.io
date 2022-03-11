@@ -6,12 +6,12 @@
   
   <title>ch3-TEB &amp; PEB | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="calling conventionstdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等 如果可以不靠引入函數表與Win32 AP">
+  <meta name="description" content="calling conventionstdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等 如果可以不靠導入表與Win32 API，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch3-TEB &amp; PEB">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="calling conventionstdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等 如果可以不靠引入函數表與Win32 AP">
+<meta property="og:description" content="calling conventionstdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等 如果可以不靠導入表與Win32 API，">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/teb.PNG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/peb.PNG">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/LDR_DATA_TABLE_ENTRY.PNG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/three-lists.png">
 <meta property="article:published_time" content="2022-03-10T11:43:13.000Z">
-<meta property="article:modified_time" content="2022-03-10T15:26:42.750Z">
+<meta property="article:modified_time" content="2022-03-11T02:12:10.953Z">
 <meta property="article:author" content="tenghaooo">
 <meta property="article:tag" content="PEB">
 <meta property="article:tag" content="TEB">
@@ -115,7 +115,7 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="calling-convention"><a href="#calling-convention" class="headerlink" title="calling convention"></a>calling convention</h1><p>stdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。<br>calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等</p>
-<p>如果可以不靠引入函數表與Win32 API，就找到載入的系統模組的base address與函數的address，並且依照calling convention把參數擺好，然後call function，那就等於是成功寫出並執行shellcode了，這是接下來的目標。</p>
+<p>如果可以不靠導入表與Win32 API，就找到載入的系統模組的base address與函數的address，並且依照calling convention把參數擺好，然後call function，那就等於是成功寫出並執行shellcode了，這就是接下來的目標。</p>
 <span id="more"></span>
 
 <h1 id="TEB"><a href="#TEB" class="headerlink" title="TEB"></a>TEB</h1><p>每個thread有一個TEB來保存自己的狀態，例如stack等。<br>一個process只會有一個PEB，但可以有多個TEB。</p>
@@ -124,10 +124,10 @@
 <p>TEB在32bit組語中，所有的TEB欄位值都可以通過FS段暫存器加上對應的offset來取得，例如可以從fs:[0x18]來取得TEB起始位址，fs:[0x04]取得StackBase，x64中是用GS段暫存器來取得欄位值。</p>
 <h1 id="PEB"><a href="#PEB" class="headerlink" title="PEB"></a>PEB</h1><p>每個process有且僅有一個PEB用來儲存process的狀態。</p>
 <p><img src="https://tenghaooo.github.io/pics/peb.PNG" alt="PEB"></p>
-<p>+0x2是使用WinAPI <code>IsDebuggerPresent</code>檢查是否正在被debug時返回的值。<br>+0x8是當前process主要執行的PE模組基址。</p>
-<p>PEB+0x10的ProcessParameters是當前process被父進程喚醒時繼承的參數資訊。</p>
+<p>+0x2是使用WinAPI <code>IsDebuggerPresent</code>檢查是否正在被debug時返回的值，我目前的理解是，惡意軟體可以用這個來anti-debug。<br>+0x8是當前process主要執行的PE模組基址。</p>
+<p>PEB+0x10的ProcessParameters是當前process被父行程喚醒時繼承的參數資訊。</p>
 <p><img src="https://tenghaooo.github.io/pics/processparameters.PNG" alt="ProcessParameters"></p>
-<p>ConsoleHandle，繼承父進程的console，這樣printf的時候會出現在父進程的黑窗中。<br>CurrentDirectoryPath紀錄被父進程指定的工作目錄，沒指定就跟父進程當前目錄相同。<br>ImagePathName紀錄當前exe的完整路徑。<br>CommandLine紀錄被父進程喚醒時給的參數。</p>
+<p>ConsoleHandle，繼承父行程的console，這樣printf的時候會出現在父行程的黑窗中。<br>CurrentDirectoryPath紀錄被父行程指定的工作目錄，沒指定就跟父行程當前目錄相同。<br>ImagePathName紀錄當前exe的完整路徑。<br>CommandLine紀錄被父行程喚醒時給的參數。</p>
 <p>PEB+0x0c的Ldr會將當前process所有已載入的模組資訊儲存起來。<br>NtDLL!LdrpInitializeProcess為執行程式裝載器，它會去修正PE模組引用到的函數指標，還會加載PE模組需要使用的其他系統模組到memory space中。</p>
 <p><img src="https://tenghaooo.github.io/pics/ldr.PNG" alt="Ldr"></p>
 <p>Length代表當前Ldr的大小。<br>Initialized若為true代表系統模組已經載入、初始化完成，可供查詢。<br>後面有三個LIST_ENTRY結構的成員，這個LIST_ENTRY是double linked list結構，被這三個linked list串起來的就是已載入的各個模組資訊。</p>
@@ -145,7 +145,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl0l58n3c000iuwtv9l6hfhs1" data-title="ch3-TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl0lsachr0006f8tv4jsfbsfu" data-title="ch3-TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
