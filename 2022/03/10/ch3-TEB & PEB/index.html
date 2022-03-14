@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/LDR_DATA_TABLE_ENTRY.PNG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/three-lists.png">
 <meta property="article:published_time" content="2022-03-10T11:43:13.000Z">
-<meta property="article:modified_time" content="2022-03-11T02:12:10.953Z">
+<meta property="article:modified_time" content="2022-03-14T11:55:00.786Z">
 <meta property="article:author" content="tenghaooo">
 <meta property="article:tag" content="PEB">
 <meta property="article:tag" content="TEB">
@@ -136,8 +136,8 @@
 <p>其中被串起來的這些模組資訊，是一個個叫LDR_DATA_TABLE_ENTRY的結構。</p>
 <p><img src="https://tenghaooo.github.io/pics/LDR_DATA_TABLE_ENTRY.PNG" alt="LDR_DATA_TABLE_ENTRY"></p>
 <p>裡面包含模組映像基址、入口點、SizeOfImage等重要資訊<br>從這三個list都可以找尋已載入模組的映象基址，遍歷哪一個list都無所謂。</p>
-<p>模組資訊中除了模組映像基址、入口點、SizeOfImage外，還有個Flags，紀錄了當前模組載入的狀態。<br>若是LDRP_STATIC_LINK代表它是process生成時就被載入的模組，可能是引入函數表紀錄需要被載入的模組。若是LDRP_STATIC_LINK代表它是被載入的dll模組。若是LDRP_ENTRY_PROCESSED代表不只被載入了，而且入口函數已被呼叫過(初始化完成)。</p>
-<p>LoadCount代表當前模組被載入的次數，可能是引入函數表說要載入它，或者動態呼叫LoadLibrary來載入它，多一次載入，LoadCount就+1，歸零時會被釋放記憶體空間。</p>
+<p>模組資訊中除了模組映像基址、入口點、SizeOfImage外，還有個Flags，紀錄了當前模組載入的狀態。<br>若是LDRP_STATIC_LINK代表它是process生成時就被載入的模組，可能是導入表紀錄需要被載入的模組。若是LDRP_IMAGE_DLL代表它是被載入的dll模組。若是LDRP_ENTRY_PROCESSED代表不只被載入了，而且入口函數已被呼叫過(初始化完成)。</p>
+<p>LoadCount代表當前模組被載入的次數，可能是導入表說要載入它，或者動態呼叫LoadLibrary來載入它，多一次載入，LoadCount就+1，歸零時會被釋放記憶體空間。</p>
 <p>FullDllName代表此模組完整路徑，BaseDllName是此模組檔案名稱<br>例如FullDllName是「C:\Windows\System32\Kernel32.dll」，而BaseDllName就是「Kernel32.dll」。</p>
 <p>整個關係圖大概長這樣，但通常第一個載入的模組是exe本人，它其實是不會出現在InInitializationOrderModuleList中的。</p>
 <p><img src="https://tenghaooo.github.io/pics/three-lists.png" alt="three-lists"></p>
@@ -145,7 +145,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl0memro20007botv7v0bg3de" data-title="ch3-TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl0qnft6v0008r8tv2tcwhpkr" data-title="ch3-TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
