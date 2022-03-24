@@ -123,7 +123,7 @@ body,
   height: 100%;
 }
 body {
-  background: #1c2226;
+  background: #171a1c;
   font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-text-size-adjust: 100%;
 }
@@ -174,7 +174,7 @@ body {
   -ms-transition: 0.2s ease-out;
   transition: 0.2s ease-out;
   z-index: 1;
-  background: #1c2226;
+  background: #171a1c;
 }
 .mobile-nav-on #wrap {
   left: 280px;
@@ -203,10 +203,10 @@ body {
 }
 .article-inner,
 .archive-article-inner {
-  background: #171a1c;
+  background: #1c2226;
   -webkit-box-shadow: 0 #ddd;
   box-shadow: 0 #ddd;
-  border: 1px solid #d0d0d0;
+  border: 1px solid #171a1c;
   border-radius: 3px;
 }
 .article-entry h1,
@@ -236,7 +236,7 @@ body {
 }
 .article-entry hr,
 .widget hr {
-  border: 1px dashed #d0d0d0;
+  border: 1px dashed #171a1c;
 }
 .article-entry strong,
 .widget strong {
@@ -310,7 +310,7 @@ body {
 #header {
   height: 300px;
   position: relative;
-  border-bottom: 1px solid #d0d0d0;
+  border-bottom: 1px solid #171a1c;
 }
 #header:before,
 #header:after {
@@ -615,11 +615,11 @@ a.article-title:hover {
 }
 .article-entry th {
   font-weight: bold;
-  border-bottom: 3px solid #d0d0d0;
+  border-bottom: 3px solid #171a1c;
   padding-bottom: 0.5em;
 }
 .article-entry td {
-  border-bottom: 1px solid #d0d0d0;
+  border-bottom: 1px solid #171a1c;
   padding: 10px 0;
 }
 .article-entry blockquote {
@@ -678,9 +678,9 @@ a.article-title:hover {
   display: inline-block;
   line-height: 1em;
   padding: 6px 15px;
-  border: 1px solid #d0d0d0;
+  border: 1px solid #171a1c;
   border-radius: 15px;
-  background: #1c2226;
+  background: #171a1c;
   color: #d0d0d0;
   text-shadow: 0 1px #fff;
   text-decoration: none;
@@ -694,7 +694,7 @@ a.article-title:hover {
 .article-footer {
   font-size: 0.85em;
   line-height: 1.6em;
-  border-top: 1px solid #d0d0d0;
+  border-top: 1px solid #171a1c;
   padding-top: 1.6em;
   margin: 0 20px 20px;
 }
@@ -763,7 +763,7 @@ a.article-title:hover {
     margin-left: -4px;
     content: "";
     border-radius: 50%;
-    background: #d0d0d0;
+    background: #171a1c;
     -webkit-box-shadow: 0 #fff;
     box-shadow: 0 #fff;
   }
@@ -805,7 +805,7 @@ a.article-title:hover {
 .article-nav-caption {
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #d0d0d0;
+  color: #171a1c;
   line-height: 1em;
   font-weight: bold;
 }
@@ -841,13 +841,13 @@ a.article-title:hover {
   padding: 0 15px;
   color: #d0d0d0;
   outline: none;
-  border: 0 solid #d0d0d0;
+  border: 0 solid #171a1c;
   border-radius: 3px 3px 0 0;
   height: 36px;
   line-height: 36px;
 }
 .article-share-links {
-  background: #1c2226;
+  background: #171a1c;
 }
 .article-share-links:before,
 .article-share-links:after {
@@ -947,7 +947,7 @@ a.article-title:hover {
   -webkit-box-shadow: 1px 2px 3px #ddd;
   box-shadow: 1px 2px 3px #ddd;
   padding: 20px;
-  border: 1px solid #d0d0d0;
+  border: 1px solid #171a1c;
   border-radius: 3px;
   margin: 50px 0;
 }
@@ -1026,7 +1026,7 @@ a.article-title:hover {
   background: #fff;
   -webkit-box-shadow: 1px 2px 3px #ddd;
   box-shadow: 1px 2px 3px #ddd;
-  border: 1px solid #d0d0d0;
+  border: 1px solid #171a1c;
   border-radius: 3px;
   text-align: center;
   color: #d0d0d0;
@@ -1073,12 +1073,12 @@ a.article-title:hover {
   font-weight: bold;
 }
 #page-nav .space {
-  color: #d0d0d0;
+  color: #171a1c;
 }
 #footer {
-  background: #1c2226;
+  background: #171a1c;
   padding: 50px 0;
-  border-top: 1px solid #d0d0d0;
+  border-top: 1px solid #171a1c;
   color: #d0d0d0;
 }
 #footer a {
@@ -1098,7 +1098,7 @@ a.article-title:hover {
   margin: 0 -20px;
   padding: 15px 20px;
   border-style: solid;
-  border-color: #d0d0d0;
+  border-color: #171a1c;
   border-width: 1px 0;
   overflow: auto;
   color: #ccc;
@@ -1114,7 +1114,7 @@ a.article-title:hover {
   font-family: "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
 }
 .article-entry code {
-  background: #1c2226;
+  background: #171a1c;
   text-shadow: 0 1px #fff;
   padding: 0 0.3em;
 }
@@ -1166,7 +1166,7 @@ a.article-title:hover {
 .article-entry .gist {
   margin: 0 -20px;
   border-style: solid;
-  border-color: #d0d0d0;
+  border-color: #171a1c;
   border-width: 1px 0;
   background: #2d2d2d;
   padding: 15px 20px 15px 0;
@@ -1302,10 +1302,10 @@ pre .javascript .function {
 .widget {
   color: #d0d0d0;
   text-shadow: 0 #fff;
-  background: #171a1c;
-  -webkit-box-shadow: 0 #d0d0d0 inset;
-  box-shadow: 0 #d0d0d0 inset;
-  border: 1px solid #d0d0d0;
+  background: #1c2226;
+  -webkit-box-shadow: 0 #171a1c inset;
+  box-shadow: 0 #171a1c inset;
+  border: 1px solid #171a1c;
   padding: 15px;
   border-radius: 3px;
 }
