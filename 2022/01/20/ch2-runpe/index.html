@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ch2-初識RunPE | tenghaooo&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。 一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch2-初識RunPE">
+<meta property="og:url" content="https://tenghaooo.github.io/2022/01/20/ch2-runpe/index.html">
+<meta property="og:site_name" content="tenghaooo&#39;s blog">
+<meta property="og:description" content="RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。 一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/runpe.gif">
+<meta property="article:published_time" content="2022-01-20T14:09:57.000Z">
+<meta property="article:modified_time" content="2022-03-26T15:07:58.539Z">
+<meta property="article:author" content="tenghaooo">
+<meta property="article:tag" content="runpe">
+<meta property="article:tag" content="process injection">
+<meta property="article:tag" content="process hollowing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tenghaooo.github.io/pics/runpe.gif">
+  
+    <link rel="alternate" href="/atom.xml" title="tenghaooo's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">tenghaooo&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/whoami">Whoami</a>
+        
+          <a class="main-nav-link" href="/works">Works</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tenghaooo.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ch2-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/20/ch2-runpe/" class="article-date">
+  <time class="dt-published" datetime="2022-01-20T14:09:57.000Z" itemprop="datePublished">2022-01-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ch2-初識RunPE
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。</p>
+<p>一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行時，要如何知道執行哪一個PE的內容才對呢，答案就在PEB(Process Environment Block)中，PEB中的ImageBaseAddress會儲存要執行的程式映像基址，假設一個PE模組被映射到address space中的0xA00000，還有另一個PE模組被映射到0x400000，而如果PEB-&gt;ImageBaseAddress是0xA00000，就代表該PE是這支process將要執行的模組。</p>
+<span id="more"></span>
+<p>當Main Thread執行到NtDLL!LdrpInitializeProcess函數(此為「執行程式裝載器」，負責修正導入導出表及重定向等工作)時，會識別出主要執行模組為位在0xA00000的那個模組，便會以該模組進行修正工作，並在執行完後把執行權交棒給該PE模組的入口(嘿對就是該PE的AddressOfEntryPoint)，然後該PE的內容就會被執行。</p>
+<p>這樣RunPE的思路就比較清晰了，假設本來有個process，其中有個A模組應該要被執行，但如果我可以在執行程式裝載器執行前，把一個B模組映射進該process的address space，而且把該process的PEB-&gt;ImageBaseAddress修改成B模組映射到的image基址，再把應該被交棒的入口改成B模組的AddressOfEntryPoint，那就可以劫持本來的流程，把B模組跑起來了。</p>
+<p>CreateProcessA在建立新process時可以將其Suspend，此時Main Thread尚未執行到執行程式裝載器，且此時Main Thread的Context中，EIP會指向NtDLL!RtlUserThreadStart函數，該函數第一個參數會放在EAX，儲存著完成初始化後應該要被交棒的執行地址，第二個參數放在EBX，儲存的就是PEB的地址，而EBX+8這個地址存的就是PEB中的ImageBaseAddress。</p>
+<p>下面程式runPE.exe會先檢查當前的模組名稱是不是garena.exe，是的話就彈一個窗口。如果不是的話，代表當前模組是runPE.exe，它會用CreateProcessA開啟garena.exe，這時候新的process模組名稱就會是garena.exe了，然後再把新process的模組替換成當前模組(runPE.exe)，這時候新process的模組名稱是garena.exe，但是實際執行的模組被替換了，所以當新的process執行時，會執行runPE.exe的內容，而runPE.exe會先檢查當前模組名稱是不是garena.exe，檢查是garena.exe，最後彈出一個窗口。</p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/tenghaooo/aaed51c658e8a11186b963b64a7e3cc9">https://gist.github.com/tenghaooo/aaed51c658e8a11186b963b64a7e3cc9</a></p>
+<p><img src="https://tenghaooo.github.io/pics/runpe.gif" alt="runpe"></p>
+<p>參考連結<br><a target="_blank" rel="noopener" href="https://github.com/aaaddress1/Windows-APT-Warfare/blob/main/source/chapter%2302/RunPE/RunPE.cpp">https://github.com/aaaddress1/Windows-APT-Warfare/blob/main/source/chapter%2302/RunPE/RunPE.cpp</a><br><a target="_blank" rel="noopener" href="https://github.com/Zer0Mem0ry/RunPE/blob/master/RunPE.cpp">https://github.com/Zer0Mem0ry/RunPE/blob/master/RunPE.cpp</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/01/20/ch2-runpe/" data-id="cl17zn0k4000e5otv34u7dg8f" data-title="ch2-初識RunPE" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process-hollowing/" rel="tag">process hollowing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process-injection/" rel="tag">process injection</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/runpe/" rel="tag">runpe</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/01/24/ch18-paging/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ch18-paging
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/object-Object/">[object Object]</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/03/10/ch3-TEB%20&%20PEB/">ch3-TEB &amp; PEB</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/09/fd/">file descriptor</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/24/ch18-paging/">ch18-paging</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/20/ch2-runpe/">ch2-初識RunPE</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/PEB/" style="font-size: 10px;">PEB</a> <a href="/tags/TEB/" style="font-size: 10px;">TEB</a> <a href="/tags/calling-convention/" style="font-size: 10px;">calling convention</a> <a href="/tags/fd/" style="font-size: 10px;">fd</a> <a href="/tags/process-hollowing/" style="font-size: 10px;">process hollowing</a> <a href="/tags/process-injection/" style="font-size: 10px;">process injection</a> <a href="/tags/runpe/" style="font-size: 10px;">runpe</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 tenghaooo<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/whoami" class="mobile-nav-link">Whoami</a>
+  
+    <a href="/works" class="mobile-nav-link">Works</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
