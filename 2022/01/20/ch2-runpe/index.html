@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   
   
-  <title>ch2-初識RunPE | tenghaooo&#39;s blog</title>
+  <title>ch.2 初識RunPE | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。 一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-初識RunPE">
+<meta property="og:title" content="ch.2 初識RunPE">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/01/20/ch2-runpe/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
 <meta property="og:description" content="RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。 一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/runpe.gif">
 <meta property="article:published_time" content="2022-01-20T14:09:57.000Z">
-<meta property="article:modified_time" content="2022-03-26T15:07:58.539Z">
+<meta property="article:modified_time" content="2022-03-26T15:26:03.360Z">
 <meta property="article:author" content="tenghaooo">
 <meta property="article:tag" content="runpe">
 <meta property="article:tag" content="process injection">
@@ -100,7 +100,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      ch2-初識RunPE
+      ch.2 初識RunPE
     </h1>
   
 
@@ -122,7 +122,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/ch2-runpe/" data-id="cl17zn0k4000e5otv34u7dg8f" data-title="ch2-初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/ch2-runpe/" data-id="cl180d2hg0009qgtv2l2e0t9c" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -138,7 +138,7 @@
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          ch18-paging
+          ch.18 paging
         
       </div>
     </a>
@@ -158,7 +158,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/object-Object/">[object Object]</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
     </div>
   </div>
 
@@ -171,7 +171,7 @@
       <ul>
         
           <li>
-            <a href="/2022/03/10/ch3-TEB%20&%20PEB/">ch3-TEB &amp; PEB</a>
+            <a href="/2022/03/10/ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
           </li>
         
           <li>
@@ -179,11 +179,11 @@
           </li>
         
           <li>
-            <a href="/2022/01/24/ch18-paging/">ch18-paging</a>
+            <a href="/2022/01/24/ch18-paging/">ch.18 paging</a>
           </li>
         
           <li>
-            <a href="/2022/01/20/ch2-runpe/">ch2-初識RunPE</a>
+            <a href="/2022/01/20/ch2-runpe/">ch.2 初識RunPE</a>
           </li>
         
       </ul>
