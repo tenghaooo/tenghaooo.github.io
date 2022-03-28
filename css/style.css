@@ -1314,7 +1314,7 @@ pre .javascript .function {
   text-decoration: none;
 }
 .widget a:hover {
-  text-decoration: underline;
+  text-shadow: 0 0 5px rgba(104,182,255,0.5);
 }
 .widget ul ul,
 .widget ol ul,
