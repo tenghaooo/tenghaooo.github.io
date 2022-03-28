@@ -390,9 +390,9 @@ body {
 .main-nav-link {
   float: left;
   color: #fff;
-  opacity: 0.9;
   font-weight: bold;
   text-decoration: none;
+  opacity: 0.8;
   text-shadow: 0 1px rgba(0,0,0,0.2);
   -webkit-transition: opacity 0.2s;
   -moz-transition: opacity 0.2s;
@@ -534,6 +534,9 @@ body {
 .article-category-link {
   margin: 0 12px 1em;
 }
+.article-category-link:hover {
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
 .article-header {
   padding: 20px 20px 0;
 }
@@ -550,6 +553,7 @@ body {
 }
 a.article-title:hover {
   color: #93abc2;
+  text-shadow: 0 0 5px rgba(104,182,255,0.5);
 }
 .article-entry {
   color: #d0d0d0;
@@ -590,7 +594,7 @@ a.article-title:hover {
   text-decoration: none;
 }
 .article-entry a:hover {
-  text-decoration: underline;
+  text-shadow: 0 0 5px rgba(104,182,255,0.5);
 }
 .article-entry ul,
 .article-entry ol,
@@ -687,9 +691,9 @@ a.article-title:hover {
 }
 .article-more-link a:hover {
   background: #93abc2;
-  color: #fff;
+  color: #171a1c;
   text-decoration: none;
-  text-shadow: 0 1px #6789a9;
+  text-shadow: 0 1px #121516;
 }
 .article-footer {
   font-size: 0.85em;
@@ -712,6 +716,7 @@ a.article-title:hover {
 }
 .article-footer a:hover {
   color: #d0d0d0;
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
 }
 .article-tag-list-item {
   float: left;
@@ -793,6 +798,7 @@ a.article-title:hover {
     float: left;
     text-align: right;
     padding-right: 20px;
+    text-shadow: 0 0 5px rgba(255,255,255,0.5);
   }
 }
 @media screen and (min-width: 768px) {
@@ -800,12 +806,14 @@ a.article-title:hover {
     float: right;
     text-align: left;
     padding-left: 20px;
+    text-shadow: 0 0 5px rgba(255,255,255,0.5);
   }
 }
 .article-nav-caption {
   text-transform: uppercase;
   letter-spacing: 2px;
   color: #171a1c;
+  text-shadow: 0 0 10px rgba(255,255,255,0.7);
   line-height: 1em;
   font-weight: bold;
 }
@@ -1009,6 +1017,7 @@ a.article-title:hover {
 }
 .archive-article-title:hover {
   color: #93abc2;
+  text-shadow: 0 0 5px rgba(104,182,255,0.5);
 }
 .archive-article-footer {
   margin-top: 1em;
@@ -1086,7 +1095,7 @@ a.article-title:hover {
   text-decoration: none;
 }
 #footer a:hover {
-  text-decoration: underline;
+  text-shadow: 0 0 5px rgba(104,182,255,0.5);
 }
 #footer-info {
   line-height: 1.6em;
