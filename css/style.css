@@ -686,14 +686,14 @@ a.article-title:hover {
   border-radius: 15px;
   background: #171a1c;
   color: #d0d0d0;
-  text-shadow: 0 1px #fff;
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
   text-decoration: none;
 }
 .article-more-link a:hover {
   background: #93abc2;
   color: #171a1c;
   text-decoration: none;
-  text-shadow: 0 1px #121516;
+  text-shadow: 0 0 5px rgba(26,26,26,0.5);
 }
 .article-footer {
   font-size: 0.85em;
