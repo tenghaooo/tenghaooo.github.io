@@ -111,7 +111,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl291pa5c0001mktv6g635ybe" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl291zmk0000fgktvc3ev2ymq" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
@@ -162,7 +162,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl291pa5l0007mktv6apj2p2c" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl291zmk3000igktvfh4u9dep" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -204,8 +204,6 @@
       
         <p>paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的page，又稱為page frames，每個frame剛好可以容納一個address space的page。</p>
 <p>paging有幾個好處，第一個是很彈性，我無須再去理會process是如何使用自己的address space的，例如它是heap還是stack，它的增長方向到底是往上還是往下等等。<br>第二個好處是簡化了free-space的管理，假設現在kernel要為一個process分配address space且一個process需要4個page的空間，那麼kernel可以maintain一個free list存放著目前free的所有physical page frame，然後拿其中四個出來裝這個process的page即可。<br>另外paging由於是大小等分的塊，不會有external fragmentation。</p>
-<h1 id="virtual-address"><a href="#virtual-address" class="headerlink" title="virtual address"></a>virtual address</h1><p>從process的視角來看，有一塊連續的address space，假設總大小為64bytes，以16bytes為一個page，總共就會有4個page。<br>而假設整個physical memory為128bytes，總共就有8個page frame。</p>
-<p>把一個process A的4個page分別放到不同的frame，例如page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。<br>從程式的視角來看，地址都是連續的，且地址就是0~63，但這0~63是virtual address。<br>實際上，當CPU要讀取或寫入某個virtual address(VA)時，會將其轉換成對應的physical address(PA)，例如VA0~15會被轉成PA48~63，因為page0-&gt;frame3，而VA16~31會被轉成PA112~127，看似連續的VA其實是分散在physical memory中。<br><img src="https://tenghaooo.github.io/pics/virtual-pages-in-frame.PNG" alt="Virtual Pages in Page frame"></p>
         
           <p class="article-more-link">
             <a href="/2022/01/24/OSTEP-ch18-paging/#more">Read More &gt;</a>
@@ -214,7 +212,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl291pa5k0006mktvbdeo0u93" data-title="ch.18 paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl291zmk1000ggktv7s3whfqz" data-title="ch.18 paging" class="article-share-link">Share</a>
       
       
       
@@ -262,7 +260,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl291pa5g0003mktv2j1bbgtr" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl291zmjq0001gktvdz9w8be8" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       
