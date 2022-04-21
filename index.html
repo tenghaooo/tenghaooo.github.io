@@ -75,9 +75,9 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-ch3-TEB &amp; PEB" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-APTWarfare-ch3-TEB &amp; PEB" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/03/10/ch3-TEB%20&%20PEB/" class="article-date">
+    <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" class="article-date">
   <time class="dt-published" datetime="2022-03-10T11:43:13.000Z" itemprop="datePublished">2022-03-10</time>
 </a>
     
@@ -93,7 +93,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/03/10/ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
+      <a class="p-name article-title" href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
     </h1>
   
 
@@ -105,13 +105,13 @@
 <p>如果可以不靠導入表與Win32 API，就找到載入的系統模組的base address與函數的address，並且依照calling convention把參數擺好，然後call function，那就等於是成功寫出並執行shellcode了，這就是接下來的目標。</p>
         
           <p class="article-more-link">
-            <a href="/2022/03/10/ch3-TEB%20&%20PEB/#more">Read More &gt;</a>
+            <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/ch3-TEB%20&%20PEB/" data-id="cl1ywzo74000mlwtv66mgbdd2" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl291pa5c0001mktv6g635ybe" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
@@ -125,9 +125,9 @@
 
 
   
-    <article id="post-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-Other-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/03/09/fd/" class="article-date">
+    <a href="/2022/03/09/Other-fd/" class="article-date">
   <time class="dt-published" datetime="2022-03-09T10:03:42.000Z" itemprop="datePublished">2022-03-09</time>
 </a>
     
@@ -143,7 +143,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/03/09/fd/">file descriptor</a>
+      <a class="p-name article-title" href="/2022/03/09/Other-fd/">file descriptor</a>
     </h1>
   
 
@@ -156,13 +156,13 @@
 <p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
         
           <p class="article-more-link">
-            <a href="/2022/03/09/fd/#more">Read More &gt;</a>
+            <a href="/2022/03/09/Other-fd/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/fd/" data-id="cl1ywzo74000nlwtv0qgcdlu3" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl291pa5l0007mktv6apj2p2c" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -176,9 +176,9 @@
 
 
   
-    <article id="post-ch18-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-OSTEP-ch18-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/24/ch18-paging/" class="article-date">
+    <a href="/2022/01/24/OSTEP-ch18-paging/" class="article-date">
   <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
 </a>
     
@@ -194,7 +194,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/24/ch18-paging/">ch.18 paging</a>
+      <a class="p-name article-title" href="/2022/01/24/OSTEP-ch18-paging/">ch.18 paging</a>
     </h1>
   
 
@@ -202,18 +202,19 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的塊，稱為page frames，每個frame剛好可以容納一個page。</p>
-<h1 id="virtual-address"><a href="#virtual-address" class="headerlink" title="virtual address"></a>virtual address</h1><p>從process的視角來看，有一塊連續的address space，假設space總大小為64bytes，以16bytes為一個page，總共就會有4個page。<br>而假設整個physical memory為128bytes，總共就有8個frame。</p>
-<p>把一個process A的4個page分別放到不同的frame，例如page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。<br>從程式的視角來看，地址都是連續的，且地址就是0~63，但這0~63是virtual address。<br>實際上，當CPU要讀取或寫入某個virtual address(VA)時，會將其轉換成對應的physical address(PA)，例如VA0~15會被轉成PA48~63，因為page0-&gt;frame3，而VA16~31會被轉成PA112~127，看似連續的VA其實是分散在physical memory中。</p>
+        <p>paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的page，又稱為page frames，每個frame剛好可以容納一個address space的page。</p>
+<p>paging有幾個好處，第一個是很彈性，我無須再去理會process是如何使用自己的address space的，例如它是heap還是stack，它的增長方向到底是往上還是往下等等。<br>第二個好處是簡化了free-space的管理，假設現在kernel要為一個process分配address space且一個process需要4個page的空間，那麼kernel可以maintain一個free list存放著目前free的所有physical page frame，然後拿其中四個出來裝這個process的page即可。<br>另外paging由於是大小等分的塊，不會有external fragmentation。</p>
+<h1 id="virtual-address"><a href="#virtual-address" class="headerlink" title="virtual address"></a>virtual address</h1><p>從process的視角來看，有一塊連續的address space，假設總大小為64bytes，以16bytes為一個page，總共就會有4個page。<br>而假設整個physical memory為128bytes，總共就有8個page frame。</p>
+<p>把一個process A的4個page分別放到不同的frame，例如page0-&gt;frame3，page1-&gt;frame7，page2-&gt;frame5，page3-&gt;frame2。<br>從程式的視角來看，地址都是連續的，且地址就是0~63，但這0~63是virtual address。<br>實際上，當CPU要讀取或寫入某個virtual address(VA)時，會將其轉換成對應的physical address(PA)，例如VA0~15會被轉成PA48~63，因為page0-&gt;frame3，而VA16~31會被轉成PA112~127，看似連續的VA其實是分散在physical memory中。<br><img src="https://tenghaooo.github.io/pics/virtual-pages-in-frame.PNG" alt="Virtual Pages in Page frame"></p>
         
           <p class="article-more-link">
-            <a href="/2022/01/24/ch18-paging/#more">Read More &gt;</a>
+            <a href="/2022/01/24/OSTEP-ch18-paging/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/ch18-paging/" data-id="cl1ywzo6m0001lwtv5vac0jjy" data-title="ch.18 paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl291pa5k0006mktvbdeo0u93" data-title="ch.18 paging" class="article-share-link">Share</a>
       
       
       
@@ -225,9 +226,9 @@
 
 
   
-    <article id="post-ch2-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-APTWarfare-ch2-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/01/20/ch2-runpe/" class="article-date">
+    <a href="/2022/01/20/APTWarfare-ch2-runpe/" class="article-date">
   <time class="dt-published" datetime="2022-01-20T14:09:57.000Z" itemprop="datePublished">2022-01-20</time>
 </a>
     
@@ -243,7 +244,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/20/ch2-runpe/">ch.2 初識RunPE</a>
+      <a class="p-name article-title" href="/2022/01/20/APTWarfare-ch2-runpe/">ch.2 初識RunPE</a>
     </h1>
   
 
@@ -255,13 +256,13 @@
 <p>一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行時，要如何知道執行哪一個PE的內容才對呢，答案就在PEB(Process Environment Block)中，PEB中的ImageBaseAddress會儲存要執行的程式映像基址，假設一個PE模組被映射到address space中的0xA00000，還有另一個PE模組被映射到0x400000，而如果PEB-&gt;ImageBaseAddress是0xA00000，就代表該PE是這支process將要執行的模組。</p>
         
           <p class="article-more-link">
-            <a href="/2022/01/20/ch2-runpe/#more">Read More &gt;</a>
+            <a href="/2022/01/20/APTWarfare-ch2-runpe/#more">Read More &gt;</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/ch2-runpe/" data-id="cl1ywzo6t0003lwtv3ab91asy" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl291pa5g0003mktv2j1bbgtr" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -298,19 +299,19 @@
       <ul>
         
           <li>
-            <a href="/2022/03/10/ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
+            <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
           </li>
         
           <li>
-            <a href="/2022/03/09/fd/">file descriptor</a>
+            <a href="/2022/03/09/Other-fd/">file descriptor</a>
           </li>
         
           <li>
-            <a href="/2022/01/24/ch18-paging/">ch.18 paging</a>
+            <a href="/2022/01/24/OSTEP-ch18-paging/">ch.18 paging</a>
           </li>
         
           <li>
-            <a href="/2022/01/20/ch2-runpe/">ch.2 初識RunPE</a>
+            <a href="/2022/01/20/APTWarfare-ch2-runpe/">ch.2 初識RunPE</a>
           </li>
         
       </ul>
