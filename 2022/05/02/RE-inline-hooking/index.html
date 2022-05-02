@@ -4,15 +4,23 @@
   <meta charset="utf-8">
   
   
-  <title>tenghaooo&#39;s blog</title>
+  <title>Windows API Hooking(Inline Hooking) | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="tenghaooo&#39;s blog">
-<meta property="og:url" content="https://tenghaooo.github.io/index.html">
+  <meta name="description" content="Inline Hooking的步驟大致是  先取得要hook的API地址(例如MessageBoxA的地址) 保存API地址前幾個bytes，後面unhook時會用到 把API地址前幾個bytes修改成push惡意函數的地址 &amp; ret 惡意函數執行後，unhook恢復原先API前幾個bytes return到API執行原先該執行的作業  在尚未patch前，原來MessageBoxA的前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows API Hooking(Inline Hooking)">
+<meta property="og:url" content="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
+<meta property="og:description" content="Inline Hooking的步驟大致是  先取得要hook的API地址(例如MessageBoxA的地址) 保存API地址前幾個bytes，後面unhook時會用到 把API地址前幾個bytes修改成push惡意函數的地址 &amp; ret 惡意函數執行後，unhook恢復原先API前幾個bytes return到API執行原先該執行的作業  在尚未patch前，原來MessageBoxA的前">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/after-patch.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/api-hooking.gif">
+<meta property="article:published_time" content="2022-05-02T12:03:42.000Z">
+<meta property="article:modified_time" content="2022-05-02T13:24:18.539Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
   
     <link rel="alternate" href="/atom.xml" title="tenghaooo's blog" type="application/atom+xml">
   
@@ -73,9 +81,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-RE-inline-hooking" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-RE-inline-hooking" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/05/02/RE-inline-hooking/" class="article-date">
   <time class="dt-published" datetime="2022-05-02T12:03:42.000Z" itemprop="datePublished">2022-05-02</time>
@@ -92,8 +98,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/05/02/RE-inline-hooking/">Windows API Hooking(Inline Hooking)</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      Windows API Hooking(Inline Hooking)
     </h1>
   
 
@@ -123,210 +129,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-APTWarfare-ch3-TEB &amp; PEB" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" class="article-date">
-  <time class="dt-published" datetime="2022-03-10T11:43:13.000Z" itemprop="datePublished">2022-03-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
-    </h1>
+    <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ch.3 TEB &amp; PEB</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="calling-convention"><a href="#calling-convention" class="headerlink" title="calling convention"></a>calling convention</h1><p>stdcall這種呼叫約定32bit是由callee進行stack的清理，參數由右至左push進入stack，返回值放在EAX，x64的話參數進入依序是RCX, RDX, R8, R9, stack。<br>calling convention主要就是決定參數放哪？是由caller還是callee清理stack？返回值存哪？等等</p>
-<p>如果可以不靠導入表與Win32 API，就找到載入的系統模組的base address與函數的address，並且依照calling convention把參數擺好，然後call function，那就等於是成功寫出並執行shellcode了，這就是接下來的目標。</p>
-        
-          <p class="article-more-link">
-            <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/#more">Read More &gt;</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl2or7j0f00036otv4j4setu8" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PEB/" rel="tag">PEB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TEB/" rel="tag">TEB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/calling-convention/" rel="tag">calling convention</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
-    <article id="post-Other-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/03/09/Other-fd/" class="article-date">
-  <time class="dt-published" datetime="2022-03-09T10:03:42.000Z" itemprop="datePublished">2022-03-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/03/09/Other-fd/">file descriptor</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>每個process有一個自己的file descriptor table，紀錄當前process的fd。</p>
-<p>在kernel space中有一個open file table，紀錄檔案開啟的情況。<br>每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。</p>
-<p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
-        
-          <p class="article-more-link">
-            <a href="/2022/03/09/Other-fd/#more">Read More &gt;</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl2or7j0k00076otvdnpb0qd1" data-title="file descriptor" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fd/" rel="tag">fd</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-OSTEP-ch18-paging" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/24/OSTEP-ch18-paging/" class="article-date">
-  <time class="dt-published" datetime="2022-01-24T07:49:15.000Z" itemprop="datePublished">2022-01-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/24/OSTEP-ch18-paging/">ch.18 paging</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>paging是指把process的address space切成多個等分的塊，每塊稱為一個page，而physical memory也相應地切成等分的page，又稱為page frames，每個frame剛好可以容納一個address space的page。</p>
-<p>paging有幾個好處，第一個是很彈性，我無須再去理會process是如何使用自己的address space的，例如它是heap還是stack，它的增長方向到底是往上還是往下等等。<br>第二個好處是簡化了free-space的管理，假設現在kernel要為一個process分配address space且一個process需要4個page的空間，那麼kernel可以maintain一個free list存放著目前free的所有physical page frame，然後拿其中四個出來裝這個process的page即可。<br>另外paging由於是大小等分的塊，不會有external fragmentation。</p>
-        
-          <p class="article-more-link">
-            <a href="/2022/01/24/OSTEP-ch18-paging/#more">Read More &gt;</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl2or7j0j00066otv6lcw4d4t" data-title="ch.18 paging" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-APTWarfare-ch2-runpe" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/20/APTWarfare-ch2-runpe/" class="article-date">
-  <time class="dt-published" datetime="2022-01-20T14:09:57.000Z" itemprop="datePublished">2022-01-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a>►<a class="article-category-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/20/APTWarfare-ch2-runpe/">ch.2 初識RunPE</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>RunPE是指惡意程式先執行一個正常的process，然後將該process本來要執行的PE模組替換成惡意的模組，導致該process執行惡意程式指定的PE而非本來該process的PE，達到披著羊皮的狼的目的，逃過防毒軟體的偵測。</p>
-<p>一個process可以掛載多個PE(ex. DLL)，也就是一個process的address space中可以映射進很多個PE，而當一個新的process要開始執行時，要如何知道執行哪一個PE的內容才對呢，答案就在PEB(Process Environment Block)中，PEB中的ImageBaseAddress會儲存要執行的程式映像基址，假設一個PE模組被映射到address space中的0xA00000，還有另一個PE模組被映射到0x400000，而如果PEB-&gt;ImageBaseAddress是0xA00000，就代表該PE是這支process將要執行的模組。</p>
-        
-          <p class="article-more-link">
-            <a href="/2022/01/20/APTWarfare-ch2-runpe/#more">Read More &gt;</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl2or7j0700016otvb8q9dh9i" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process-hollowing/" rel="tag">process hollowing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process-injection/" rel="tag">process injection</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/runpe/" rel="tag">runpe</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
 </section>

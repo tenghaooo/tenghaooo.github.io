@@ -4,22 +4,15 @@
   <meta charset="utf-8">
   
   
-  <title>file descriptor | tenghaooo&#39;s blog</title>
+  <title>Category: Hooking | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="file descriptor">
-<meta property="og:url" content="https://tenghaooo.github.io/2022/03/09/Other-fd/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="tenghaooo&#39;s blog">
+<meta property="og:url" content="https://tenghaooo.github.io/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="每個process有一個自己的file descriptor table，紀錄當前process的fd。 在kernel space中有一個open file table，紀錄檔案開啟的情況。每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tenghaooo.github.io/pics/fd.png">
-<meta property="article:published_time" content="2022-03-09T10:03:42.000Z">
-<meta property="article:modified_time" content="2022-03-09T14:35:51.219Z">
 <meta property="article:author" content="tenghaooo">
-<meta property="article:tag" content="fd">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tenghaooo.github.io/pics/fd.png">
   
     <link rel="alternate" href="/atom.xml" title="tenghaooo's blog" type="application/atom+xml">
   
@@ -80,86 +73,39 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Other-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/03/09/Other-fd/" class="article-date">
-  <time class="dt-published" datetime="2022-03-09T10:03:42.000Z" itemprop="datePublished">2022-03-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="p-name article-title" itemprop="headline name">
-      file descriptor
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2022" class="archive-year">2022</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2022/05/02/RE-inline-hooking/" class="archive-article-date">
+  <time class="dt-published" datetime="2022-05-02T12:03:42.000Z" itemprop="datePublished">May 2</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2022/05/02/RE-inline-hooking/">Windows API Hooking(Inline Hooking)</a>
     </h1>
   
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>每個process有一個自己的file descriptor table，紀錄當前process的fd。</p>
-<p>在kernel space中有一個open file table，紀錄檔案開啟的情況。<br>每個entry叫做open file description，其中含有offset(游標位址)，rw flag等資訊，還有指向inode的pointer，inode基本上就代表某個file本人。</p>
-<p><img src="https://tenghaooo.github.io/pics/fd.png" alt="fd"></p>
-<span id="more"></span>
-<ul>
-<li><p>當process <code>open()</code>一個file時，會產生一個新的fd跟新的open file description，並且新fd會指向新open file description，新open file description再指向inode。</p>
-</li>
-<li><p>當process A跟process B<code>open()</code>相同的file，那麼會新增各自的fd，指向不同的open file description，但兩個open file description會指向同一個inode。</p>
-</li>
-<li><p>當process A跟process B <code>open()</code>不同的file，更不用說了，各自的fd指向不同的open file description，也指向不同的inode。</p>
-</li>
-<li><p>當process A <code>fork()</code>一個process B出來時，A和B會有各自獨立的file descriptor table，但這些相同數字的fd(這些fd是指在<code>fork()</code>之前A就已經<code>open()</code>取得的fd)會指向相同的open file description。<br>假設在<code>fork()</code>前，A有<code>open()</code>得到一個fd3，那<code>fork()</code>之後，B的fd3和A的fd3會指向同一個open file description。<br>但如果在<code>fork()</code>之後，A和B各自<code>open()</code>一個file，這兩個新的fd4就會指向不同的open file description，也就可能會有不同的rw flag和offset(不過如果AB <code>open()</code>的檔案是同一個，那這兩個open file description會指向同一個inode)。</p>
-</li>
-<li><p>process有多個thread時，thread們共用process的file descriptor table。</p>
-</li>
-<li><p>process可以用<code>dup()</code>、<code>dup2()</code>來複製自己的fd，新的這個fd會和舊的fd指向同一個open file description。</p>
-</li>
-</ul>
-<p>參考資料<br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/67375028/does-opening-a-file-in-a-child-process-create-a-separate-entry-in-the-system-ope">https://stackoverflow.com/questions/67375028/does-opening-a-file-in-a-child-process-create-a-separate-entry-in-the-system-ope</a><br><a target="_blank" rel="noopener" href="https://kkc.github.io/2020/08/22/file-descriptor/">https://kkc.github.io/2020/08/22/file-descriptor/</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl2or7j0k00076otvdnpb0qd1" data-title="file descriptor" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fd/" rel="tag">fd</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          ch.3 TEB &amp; PEB
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2022/01/24/OSTEP-ch18-paging/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">ch.18 paging</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
 
 </section>
