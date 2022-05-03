@@ -4,20 +4,24 @@
   <meta charset="utf-8">
   
   
-  <title>Windows API Hooking(Inline Hooking) | tenghaooo&#39;s blog</title>
+  <title>Windows API Inline Hooking | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Inline Hooking的步驟大致是  先取得要hook的API地址(例如MessageBoxA的地址) 保存API地址前幾個bytes，後面unhook時會用到 把API地址前幾個bytes修改成push惡意函數的地址 &amp; ret 惡意函數執行後，unhook恢復原先API前幾個bytes return到API執行原先該執行的作業">
+  <meta name="description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。 以下會hoo">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows API Hooking(Inline Hooking)">
+<meta property="og:title" content="Windows API Inline Hooking">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="Inline Hooking的步驟大致是  先取得要hook的API地址(例如MessageBoxA的地址) 保存API地址前幾個bytes，後面unhook時會用到 把API地址前幾個bytes修改成push惡意函數的地址 &amp; ret 惡意函數執行後，unhook恢復原先API前幾個bytes return到API執行原先該執行的作業">
+<meta property="og:description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。 以下會hoo">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/after-patch.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/hook_func_addr.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/before-unhook.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/after-unhook.JPG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/api-hooking.gif">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/no-unhook.gif">
 <meta property="article:published_time" content="2022-05-02T12:03:42.000Z">
-<meta property="article:modified_time" content="2022-05-02T13:50:39.508Z">
+<meta property="article:modified_time" content="2022-05-03T12:36:51.887Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
@@ -88,7 +92,7 @@
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking/">Hooking</a>
+    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hook%E6%8A%80%E8%A1%93/">Hook技術</a>
   </div>
 
   </div>
@@ -99,7 +103,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      Windows API Hooking(Inline Hooking)
+      Windows API Inline Hooking
     </h1>
   
 
@@ -107,27 +111,33 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Inline Hooking的步驟大致是</p>
+        <p>目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。</p>
+<p>Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。</p>
+<p>以下會hook MessageBoxA為例子，步驟大致是</p>
 <ul>
-<li>先取得要hook的API地址(例如MessageBoxA的地址)</li>
-<li>保存API地址前幾個bytes，後面unhook時會用到</li>
-<li>把API地址前幾個bytes修改成push惡意函數的地址 &amp; ret</li>
-<li>惡意函數執行後，unhook恢復原先API前幾個bytes</li>
-<li>return到API執行原先該執行的作業</li>
+<li>先取得要hook的MessageBoxA地址</li>
+<li>保存MessageBoxA內前幾個bytes，因為hook要修改這幾個bytes，而後面unhook時需要恢復</li>
+<li>把MessageBoxA內前幾個bytes修改成<code>PUSH hook_func_addr</code> 和<code> RET</code>兩條指令(相當於JMP過去)</li>
+<li>hook function執行完功能後(還沒return)，unhook恢復原先API前幾個bytes</li>
+<li>return到MessageBoxA執行原先該執行的作業</li>
 </ul>
 <span id="more"></span>
 
-<p>在尚未patch前，原來MessageBoxA的前六個byte如下圖所示<br><img src="https://tenghaooo.github.io/pics/before-patch.JPG" alt="before patch"></p>
-<p>patch後，MessageBoxA的前六個byte，被修改成push HookedMessageBox的地址和ret兩個指令，當執行MessageBoxA時，就會執行這兩個指令，從而改變flow，先去執行HookedMessageBox<br><img src="https://tenghaooo.github.io/pics/after-patch.JPG" alt="after patch"></p>
+<p>在尚未hook前，原來MessageBoxA的前六個byte如下圖所示<br><img src="https://tenghaooo.github.io/pics/before-patch.JPG" alt="before hook"></p>
+<p>hook後，MessageBoxA的前六個byte，被修改成push HookedMessageBox的地址和ret兩個指令，當執行MessageBoxA時，就會執行這兩個指令，從而改變flow，先去執行HookedMessageBox<br><img src="https://tenghaooo.github.io/pics/after-patch.JPG" alt="after hook"></p>
+<p>可以看到PUSH的值就是HookedMessageBox的地址<br><img src="https://tenghaooo.github.io/pics/hook_func_addr.JPG" alt="Address of HookedMessageBox"></p>
+<p>當執行到HookedMessageBox中unhook的地方，unhook前，MessageBoxA的內容還是PUSH &amp; RET<br><img src="https://tenghaooo.github.io/pics/before-unhook.JPG" alt="before unhook"></p>
+<p>unhook後，MessageBoxA又恢復成原來的樣子了，之後呼叫MessageBoxA都是正常流程了<br><img src="https://tenghaooo.github.io/pics/after-unhook.JPG" alt="after unhook"></p>
 <p>執行<br><img src="https://tenghaooo.github.io/pics/api-hooking.gif" alt="api-hooking"></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">FARPROC APIAddr = <span class="literal">NULL</span>;</span><br><span class="line">BYTE OriginBytes[<span class="number">6</span>] = &#123;&#125;;</span><br><span class="line">SIZE_T written;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> __stdcall <span class="title">HookedMessageBox</span><span class="params">(HWND hWnd, LPCSTR lptext, LPCSTR lptitle, UINT uType)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;This is hook function\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Origin text: %s\n&quot;</span>, lptext);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Origin title: %s\n&quot;</span>, lptitle);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">WriteProcessMemory</span>(<span class="built_in">GetCurrentProcess</span>(), (LPVOID)APIAddr, OriginBytes, <span class="built_in"><span class="keyword">sizeof</span></span>(OriginBytes), &amp;written);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">MessageBoxA</span>(hWnd, lptext, lptitle, uType);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	BYTE patch[<span class="number">6</span>] = &#123;&#125;;</span><br><span class="line">	SIZE_T red;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// get address of MessageBoxA</span></span><br><span class="line">	APIAddr = <span class="built_in">GetProcAddress</span>(<span class="built_in">LoadLibraryA</span>(<span class="string">&quot;USER32.DLL&quot;</span>), <span class="string">&quot;MessageBoxA&quot;</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// save origin bytes of MessageBoxA</span></span><br><span class="line">	<span class="built_in">ReadProcessMemory</span>(<span class="built_in">GetCurrentProcess</span>(), APIAddr, OriginBytes, <span class="built_in"><span class="keyword">sizeof</span></span>(OriginBytes), &amp;red);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// get address of HookedMessageBox</span></span><br><span class="line">	VOID* HookAddr = &amp;HookedMessageBox;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* patch content:</span></span><br><span class="line"><span class="comment">			push HookedMessageBox</span></span><br><span class="line"><span class="comment">			ret</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="built_in">memcpy_s</span>(patch, <span class="number">1</span>, <span class="string">&quot;\x68&quot;</span>, <span class="number">1</span>);</span><br><span class="line">	<span class="built_in">memcpy_s</span>(patch + <span class="number">1</span>, <span class="number">4</span>, &amp;HookAddr, <span class="number">4</span>);</span><br><span class="line">	<span class="built_in">memcpy_s</span>(patch + <span class="number">5</span>, <span class="number">1</span>, <span class="string">&quot;\xc3&quot;</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// patch to beginning of MessageBoxA</span></span><br><span class="line">	<span class="built_in">WriteProcessMemory</span>(<span class="built_in">GetCurrentProcess</span>(), APIAddr, patch, <span class="built_in"><span class="keyword">sizeof</span></span>(patch), &amp;written);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">MessageBoxA</span>(<span class="literal">NULL</span>, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, MB_OK);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>如果想在HookedMessageBox中正常呼叫MessageBoxA的話，就一定要先在HookedMessageBox中unhook，如果沒有先unhook就直接呼叫MessageBoxA，會導致無限遞迴。<br>MessageBoxA(因為PUSH &amp; RET) -&gt; HookedMessageBox -&gt; MessageBoxA -&gt; HookedMessageBox -&gt;…..<br>例如我把line 14拿掉，就會這樣。<br><img src="https://tenghaooo.github.io/pics/no-unhook.gif" alt="no-unhook"></p>
 <p>參考資料<br><a target="_blank" rel="noopener" href="https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++">https://www.ired.team/offensive-security/code-injection-process-injection/how-to-hook-windows-api-using-c++</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2os4sv600087ctv4a2eb0sc" data-title="Windows API Hooking(Inline Hooking)" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2q4yh3r00083gtv47u30g0f" data-title="Windows API Inline Hooking" class="article-share-link">Share</a>
       
       
       
@@ -157,7 +167,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking/">Hooking</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hook%E6%8A%80%E8%A1%93/">Hook技術</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
     </div>
   </div>
 
@@ -170,7 +180,7 @@
       <ul>
         
           <li>
-            <a href="/2022/05/02/RE-inline-hooking/">Windows API Hooking(Inline Hooking)</a>
+            <a href="/2022/05/02/RE-inline-hooking/">Windows API Inline Hooking</a>
           </li>
         
           <li>
