@@ -6,12 +6,12 @@
   
   <title>Windows API Inline Hooking | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。 以下會hoo">
+  <meta name="description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程改變，先去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成跳到B_addr之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行，unhook，再return給A執行其本來該執行的功能。 跳轉指令如下，這裡不用JMP B">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows API Inline Hooking">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。 以下會hoo">
+<meta property="og:description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程改變，先去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成跳到B_addr之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行，unhook，再return給A執行其本來該執行的功能。 跳轉指令如下，這裡不用JMP B">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/after-patch.JPG">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/api-hooking.gif">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/no-unhook.gif">
 <meta property="article:published_time" content="2022-05-02T12:03:42.000Z">
-<meta property="article:modified_time" content="2022-05-04T04:11:23.777Z">
+<meta property="article:modified_time" content="2022-05-04T05:47:33.240Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
@@ -111,8 +111,13 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程被劫持，先跑去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。</p>
-<p>Inline Hooking就是修改函數A，把A開頭的內容修改成類似JMP B之類的指令，導致A函數被呼叫時，會先JMP B去執行B函數，然後B函數執行完功能後，unhook，再return給A執行其本來該執行的功能。</p>
+        <p>目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程改變，先去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。</p>
+<p>Inline Hooking就是修改函數A，把A開頭的內容修改成跳到B_addr之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行，unhook，再return給A執行其本來該執行的功能。</p>
+<p>跳轉指令如下，這裡不用<code>JMP B_addr</code>是因為JMP後面接的值是相對當前指令地址的值，而非函數的地址B_addr</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PUSH B_addr</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">MOV eax, B_addr</span><br><span class="line">JMP eax</span><br></pre></td></tr></table></figure>
+
 <p>以下會hook MessageBoxA為例子，步驟大致是</p>
 <ul>
 <li>先取得要hook的MessageBoxA地址</li>
@@ -137,7 +142,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2r2bmib000yb0tvd3n7cyrs" data-title="Windows API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2r5rvzp000y74tv731g6lp2" data-title="Windows API Inline Hooking" class="article-share-link">Share</a>
       
       
       
