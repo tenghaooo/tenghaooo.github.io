@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   
   
-  <title>Windows API Inline Hooking | tenghaooo&#39;s blog</title>
+  <title>API Inline Hooking | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程改變，先去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成跳到B_addr之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行，unhook，再return給A執行其本來該執行的功能。 跳轉指令如下，這裡不用JMP B">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows API Inline Hooking">
+<meta property="og:title" content="API Inline Hooking">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
 <meta property="og:description" content="目前我對Hook的理解是，透過修改IAT或者函數內容導致執行流程改變，先去執行其他函數的技術，而unhook就是指把IAT或函數內容修改回來，讓執行流程恢復正常。 Inline Hooking就是修改函數A，把A開頭的內容修改成跳到B_addr之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行，unhook，再return給A執行其本來該執行的功能。 跳轉指令如下，這裡不用JMP B">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/api-hooking.gif">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/no-unhook.gif">
 <meta property="article:published_time" content="2022-05-02T12:03:42.000Z">
-<meta property="article:modified_time" content="2022-05-04T05:47:33.240Z">
+<meta property="article:modified_time" content="2022-05-06T09:44:40.858Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
@@ -92,7 +92,7 @@
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking/">Hooking</a>
+    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking-Injection/">Hooking & Injection</a>
   </div>
 
   </div>
@@ -103,7 +103,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      Windows API Inline Hooking
+      API Inline Hooking
     </h1>
   
 
@@ -142,7 +142,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2r5rvzp000y74tv731g6lp2" data-title="Windows API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2r5rvzp000y74tv731g6lp2" data-title="API Inline Hooking" class="article-share-link">Share</a>
       
       
       
@@ -172,7 +172,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking/">Hooking</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking-Injection/">Hooking & Injection</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
     </div>
   </div>
 
@@ -185,7 +185,7 @@
       <ul>
         
           <li>
-            <a href="/2022/05/02/RE-inline-hooking/">Windows API Inline Hooking</a>
+            <a href="/2022/05/02/RE-inline-hooking/">API Inline Hooking</a>
           </li>
         
           <li>
