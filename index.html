@@ -101,9 +101,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>簡單來看，hook就是修改目標函數內容導致其執行流程改變，跑去執行其他函數，而unhook就是指把目標函數內容修改回來，讓其執行流程恢復正常。</p>
-<p>Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A函數被呼叫時，會先去執行B函數，然後B函數執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其本來該執行的功能。</p>
-<p>跳轉指令如下，這裡不用<code>JMP B_addr</code>是因為JMP後面接的值是相對當前指令地址的值，而非函數的地址B_addr</p>
+        <p>簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。<br>hook可好可壞，全看改變流程後執行的函數是做什麼事情。</p>
+<p>Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能。</p>
+<p>跳轉指令如下。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PUSH B_addr</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
 <p>或</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">MOV eax, B_addr</span><br><span class="line">JMP eax</span><br></pre></td></tr></table></figure>
@@ -112,7 +112,8 @@
 <ul>
 <li>先取得要hook的MessageBoxA地址</li>
 <li>保存MessageBoxA內前幾個bytes，因為hook要修改這幾個bytes，而後面unhook時需要恢復</li>
-<li>把MessageBoxA內前幾個bytes修改成<code>PUSH hook_func_addr</code> 和<code> RET</code>兩條指令(相當於JMP過去)</li>
+<li>取得hook function的地址</li>
+<li>把MessageBoxA內前幾個bytes修改成<code>PUSH hook_func_addr</code> 和<code> RET</code>兩條指令</li>
 <li>hook function執行完功能後(還沒return)，unhook恢復原先API前幾個bytes</li>
 <li>return到MessageBoxA執行原先該執行的作業</li>
 </ul>
@@ -124,7 +125,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2u9xlyp000kd0tvc0ib9i9y" data-title="API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2uajqeb000ni0tv9ayvcbzu" data-title="API Inline Hooking" class="article-share-link">Share</a>
       
       
       
@@ -172,7 +173,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl2u9xlyk000ed0tv37152xju" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl2uajqea000mi0tv043pf995" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
@@ -223,7 +224,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl2u9xlyl000gd0tv7iey0ko7" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl2uajqed000pi0tvcc5f6kno" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -273,7 +274,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl2u9xlyo000id0tvhv9nhgfy" data-title="ch.18 paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl2uajqdt0003i0tvb9vngzwi" data-title="ch.18 paging" class="article-share-link">Share</a>
       
       
       
@@ -321,7 +322,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl2u9xly90001d0tvhpg3hitu" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl2uajqdp0001i0tv2p2f0r2m" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       
