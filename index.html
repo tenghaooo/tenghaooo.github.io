@@ -75,6 +75,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-RE-dll-injection" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/10/RE-dll-injection/" class="article-date">
+  <time class="dt-published" datetime="2022-05-10T12:00:00.000Z" itemprop="datePublished">2022-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking-Injection/">Hooking & Injection</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/05/10/RE-dll-injection/">CreateRemoteThread dll injection</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>經典dll injection，使用幾個WinAPI的組合</p>
+<ul>
+<li>OpenProcess取得remote process HANDLE</li>
+<li>VirtualAllocEx在remote process上申請空間</li>
+<li>WriteProcessMemory寫入要注入的dll路徑</li>
+<li>GetProcAddress取得LoadLibraryW的地址，這步要確認一下當前的kernel32.dll載入到當前(dll injector.exe)的process跟載入到remote process的virtual address是不是相同，必須要相同，否則當前process的LoadLibraryW的address就不會是remote process中LoadLibraryW的address</li>
+<li>CreateRemoteThread讓remote process新建thread去執行LoadLibraryW注入dll</li>
+</ul>
+        
+          <p class="article-more-link">
+            <a href="/2022/05/10/RE-dll-injection/#more">Read More &gt;</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl30591ih0007x8tv8xil51sx" data-title="CreateRemoteThread dll injection" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-RE-inline-hooking" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/05/02/RE-inline-hooking/" class="article-date">
@@ -125,7 +179,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl2uajqeb000ni0tv9ayvcbzu" data-title="API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl30591iv0019x8tvhsbcblfw" data-title="API Inline Hooking" class="article-share-link">Share</a>
       
       
       
@@ -173,7 +227,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl2uajqea000mi0tv043pf995" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl30591id0003x8tv587r2j09" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
@@ -224,7 +278,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl2uajqed000pi0tvcc5f6kno" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl30591ii0008x8tvcx6p98cz" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -274,7 +328,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl2uajqdt0003i0tvb9vngzwi" data-title="ch.18 paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl30591ig0006x8tv3mj53jkx" data-title="ch.18 paging" class="article-share-link">Share</a>
       
       
       
@@ -322,7 +376,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl2uajqdp0001i0tv2p2f0r2m" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl30591ia0001x8tv6afj6bih" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       
@@ -359,6 +413,10 @@
       <ul>
         
           <li>
+            <a href="/2022/05/10/RE-dll-injection/">CreateRemoteThread dll injection</a>
+          </li>
+        
+          <li>
             <a href="/2022/05/02/RE-inline-hooking/">API Inline Hooking</a>
           </li>
         
@@ -372,10 +430,6 @@
         
           <li>
             <a href="/2022/01/24/OSTEP-ch18-paging/">ch.18 paging</a>
-          </li>
-        
-          <li>
-            <a href="/2022/01/20/APTWarfare-ch2-runpe/">ch.2 初識RunPE</a>
           </li>
         
       </ul>

