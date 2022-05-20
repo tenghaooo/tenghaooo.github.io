@@ -117,7 +117,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl3e1azo7000jt0tvbrt7h57n" data-title="dll injection" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/10/RE-dll-injection/" data-id="cl3e724sx0013l4tvdzu00qxa" data-title="dll injection" class="article-share-link">Share</a>
       
       
       
@@ -156,12 +156,13 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。<br>hook可好可壞，全看改變流程後執行的函數是做什麼事情。</p>
-<p>Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能。</p>
+<p>inline hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能，像B這樣的函數可稱作detour function。</p>
 <p>跳轉指令如下。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PUSH B_addr</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
 <p>或</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">MOV eax, B_addr</span><br><span class="line">JMP eax</span><br></pre></td></tr></table></figure>
 
+<p>inline hooking關鍵在於B的參數與calling convention要和A一致，要讓B把A的參數當成自己的參數的樣子。<br>這個也很好理解，因為當實際執行到A的instruction時，等於已經進入A函數體，而在這之前參數早就已經擺好了，進入函數體A後，會執行hook的跳轉指令跳到B去執行，如果B的參數與calling convention與A不一致，可能會搞爆stack上擺放的參數，例如B清理stack時會多清或少清(假設calling convention規定由callee清理參數)，導致之後程式會執行錯誤。</p>
 <p>以下會hook MessageBoxA為例子，步驟大致是</p>
 <ul>
 <li>先取得要hook的MessageBoxA地址</li>
@@ -179,7 +180,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl3e1azo8000mt0tv6q2c6xng" data-title="API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl3e724sy0014l4tvdbficjcz" data-title="API Inline Hooking" class="article-share-link">Share</a>
       
       
       
@@ -227,7 +228,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl3e1azo4000ft0tv804s03h4" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/10/APTWarfare-ch3-TEB%20&%20PEB/" data-id="cl3e724se0003l4tvh8584z8u" data-title="ch.3 TEB &amp; PEB" class="article-share-link">Share</a>
       
       
       
@@ -278,7 +279,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl3e1azo6000it0tv35hvh02s" data-title="file descriptor" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/03/09/Other-fd/" data-id="cl3e724sh0006l4tvagi86f49" data-title="file descriptor" class="article-share-link">Share</a>
       
       
       
@@ -328,7 +329,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl3e1azo4000gt0tvei1cgaun" data-title="ch.18 paging" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/24/OSTEP-ch18-paging/" data-id="cl3e724si0007l4tvepa2g8x3" data-title="ch.18 paging" class="article-share-link">Share</a>
       
       
       
@@ -376,7 +377,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl3e1azns0001t0tvc5yie7hh" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/01/20/APTWarfare-ch2-runpe/" data-id="cl3e724sb0001l4tvej5j7lh8" data-title="ch.2 初識RunPE" class="article-share-link">Share</a>
       
       
       

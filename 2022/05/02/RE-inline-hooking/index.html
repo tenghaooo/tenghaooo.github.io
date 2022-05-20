@@ -6,12 +6,12 @@
   
   <title>API Inline Hooking | tenghaooo&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。hook可好可壞，全看改變流程後執行的函數是做什麼事情。 Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能。">
+  <meta name="description" content="簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。hook可好可壞，全看改變流程後執行的函數是做什麼事情。 inline hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能，像">
 <meta property="og:type" content="article">
 <meta property="og:title" content="API Inline Hooking">
 <meta property="og:url" content="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/index.html">
 <meta property="og:site_name" content="tenghaooo&#39;s blog">
-<meta property="og:description" content="簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。hook可好可壞，全看改變流程後執行的函數是做什麼事情。 Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能。">
+<meta property="og:description" content="簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。hook可好可壞，全看改變流程後執行的函數是做什麼事情。 inline hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能，像">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/after-patch.JPG">
@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://tenghaooo.github.io/pics/api-hooking.gif">
 <meta property="og:image" content="https://tenghaooo.github.io/pics/no-unhook.gif">
 <meta property="article:published_time" content="2022-05-02T12:03:42.000Z">
-<meta property="article:modified_time" content="2022-05-06T10:24:45.771Z">
+<meta property="article:modified_time" content="2022-05-20T08:42:06.759Z">
 <meta property="article:author" content="tenghaooo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tenghaooo.github.io/pics/before-patch.JPG">
@@ -112,12 +112,13 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>簡單來看，hook就是修改目標函數內容導致其執行流改變，跑去執行其他函數，而unhook就是把目標函數內容修改回來，讓其執行流恢復正常。<br>hook可好可壞，全看改變流程後執行的函數是做什麼事情。</p>
-<p>Inline Hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能。</p>
+<p>inline hooking就是修改函數A，把A開頭的內容改成跳到B之類的指令，導致A被呼叫時，會先去執行B，然後B執行完功能後會unhook，把A開頭的內容恢復原先的樣子，再把流程給A執行其原本的功能，像B這樣的函數可稱作detour function。</p>
 <p>跳轉指令如下。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PUSH B_addr</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
 <p>或</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">MOV eax, B_addr</span><br><span class="line">JMP eax</span><br></pre></td></tr></table></figure>
 
+<p>inline hooking關鍵在於B的參數與calling convention要和A一致，要讓B把A的參數當成自己的參數的樣子。<br>這個也很好理解，因為當實際執行到A的instruction時，等於已經進入A函數體，而在這之前參數早就已經擺好了，進入函數體A後，會執行hook的跳轉指令跳到B去執行，如果B的參數與calling convention與A不一致，可能會搞爆stack上擺放的參數，例如B清理stack時會多清或少清(假設calling convention規定由callee清理參數)，導致之後程式會執行錯誤。</p>
 <p>以下會hook MessageBoxA為例子，步驟大致是</p>
 <ul>
 <li>先取得要hook的MessageBoxA地址</li>
@@ -143,7 +144,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl3e1azo8000mt0tv6q2c6xng" data-title="API Inline Hooking" class="article-share-link">Share</a>
+      <a data-url="https://tenghaooo.github.io/2022/05/02/RE-inline-hooking/" data-id="cl3e724sy0014l4tvdbficjcz" data-title="API Inline Hooking" class="article-share-link">Share</a>
       
       
       
